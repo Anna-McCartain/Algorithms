@@ -1,0 +1,391 @@
+\documentclass{article}
+
+\title{COMP26120 Lab 5}
+\author{Anna McCartain}
+
+\begin{document}
+\maketitle
+
+% PART 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Complexity Analysis}
+\label{sec:complexity}
+
+
+\subsection{Iteration Sort}
+
+Insertion sort is an algorithm that sorts elements of an array one element at a time. It works as so; taking each element of the array, comparing it with each element before it, and swapping them if they are not in order. In my insertion sort algorithm, I first created a new array, initializing it with the first element of array to be sorted. Then for each element in the array, we add it to the new array, compare it with each element previous in the array, and swap addresses in the array accordingly. For my own reference in explanation I will add an example of how my code works. \newline
+
+Initially: array - CBA \newline
+Add to newArray element 0: newArray - C \newline
+
+
+Loop 1: \newline
+
+	newArray - CB\newline
+
+		Loop 1a:\newline
+
+			COMPARE B with C\newline
+
+			SWAP \&B and \&C if B less than C\newline
+
+			newArray - BC\newline
+
+
+Loop 2:\newline
+
+	newArray - BCA\newline
+
+		Loop 2a:\newline
+
+			COMPARE A with C\newline
+
+			SWAP \&A and \&C if A less than  C\newline
+
+			newArray - BAC\newline
+
+		Loop 2b:\newline
+
+			COMPARE A with B\newline
+
+			SWAP \&A and \&B if A less than  B\newline
+
+			newArray - ABC\newline
+
+
+As I have researched online the complexity of insertion sort - I have seen how other people have written this algorithm, taking the outer loop as iterating up the array, and the inner loop to compare this element with each before it. Their inner loop condition states: While( array[j - 1] /> array[j] and j /> 0 ) then swap element. This algorithm is much better than mine as it allows for this inner loop to not be executed if elements are in order. When dealing with complexity, this allows the best case to be O(n) - as the outer loop only iterates when the elements are already in order.\par
+
+However, my production of the insertion algorithm is a little less efficient; as I have 2 nested for loops, both will always execute. The outside loop will execute n - 1 times, whereas the inner for will execute {1 + 2 + ... (n - 1)} times . So (n - i) for each iteration of the outer loop, where i is in the range 1 to n - 1.\par
+
+Example: see above. n = 3\newline
+
+ outside loop iterates n - 1: 2 times\newline
+
+ inside  loop iterates I - used the summation of the natural numbers\newline
+ formula, minus n:\newline
+
+  			$n(n - 1) / 2$\newline
+
+				$3(2) / 2$            : 3 times\newline
+
+
+I also have another for loop to put new sorted array back into old array. This will run n times however is not nested.
+	Change array loop iterates n times: 3 times\newline
+
+
+My swap function inside my inner loop is the dependable line; ie this is the line that changes how many lines are executed. If the If/COMPARE statement is not satisfied, the line will not execute. This will only change the number of steps by 1 value, eg. the inner loop would go from $2(n(n - 1) / 2)$ to $3(n(n - 1) / 2)$. This change in the constant is insignificant when we start addressing large values of n.\par
+
+Overall the steps required for the algorithm I have wrote are:\newline
+
+
+Best Case:\newline
+
+= $5(n - 1) + 2(n(n - 1) / 2) + 5n + 3$\newline
+
+= $n^2 + 9n - 2$\newline
+
+
+Worst Case:\newline
+
+= $5(n - 1) + 3(n(n - 1) / 2) + 5n + 3$\newline
+
+= $3n^2 + 17n - 4$\newline
+
+
+
+
+Using rule 5 of of Big O notation:\newline
+
+If f(n) is of degree d, then f(n) is $O(n^d)$\newline
+
+We can decipher that the best and worst case complexity for my algorithm are actually the same - $n^2$.\newline
+
+In this case, due to the inefficiency of my algorithm, the average case is also $n^2$.\newline
+
+
+
+\subsection{Quick Sort}
+
+Quick sort is a simple divide and conquer algorithm; we chose element at index 0 as the initial pivot, sort the other values around this pivot, and then recursively repeat this process with the 2 partitioned arrays either side of the pivot until the front and back index's of the arrays cross over, hence the partitioned arrays are all now of size 1. We can picture this algorithm working down through a tree structure as the array decreases in size. If we denote the time taken at each node to be v, then this value will be proportional to the length of the array.\par
+
+The complexity of the sorting algorithm itself is O(n) as we have 1 while loop that iterates over the size of the array. When we perform quick sort, an array of size m \newline
+\-\-\-\-\-\-\-\newline
+
+Gets broken into an array of size n1, n2, and x the pivot.\newline
+
+\-\-\- \- \-\-\-\newline
+
+Making the time complexity of each layer $T(n) = T(n1) + T(n2) + c * n$\newline
+ Complexity: n\newline
+
+
+The worst cases of quick sort occur when the pivot always ends up in the same location - the front of the array. This will occur with a sorted array, or an array of equal elements. In this case, the size of either n1 or n2, will be 0 and the latter (n - 1). When subbing this into the recurrence equation, it is that T(n2) = 0, T(n1) is always decreasing in size, along with the Complexity.\par
+
+Level 1: T(n) = T(n - 1) + 0 + Complexity: n\newline
+
+Level 2: T(n) = T(n - 2) + 0 + Complexity: n - 1\newline
+
+...\newline
+
+Level X: T(n) = T(n - (n - 1)) + 0 + Complexity: n - (n - 2)\newline
+
+
+Overall, the summation of the complexity is the sum of natural numbers up to n, minus 1.\newline
+
+Complexity: $\frac{n(n + 1)}{2} - 1$\newline
+
+Hence Complexity: $O(n^2)$\newline
+
+
+The best case of the quick sort algorithm, is where the pivot of each layer roughly ends up in the centre of each array. This allows for the comparisons at each level to be divided equally.\par
+
+Hence\newline
+
+
+T(n) = 2T(n / 2) + Complexity: n\newline
+
+Each partition takes O(n) complexity, and we have on average log(n) partitions.\newline
+
+Hence in the best case complexity is O(nlogn)
+\newline
+
+
+%====================================
+\section{Experimental Analysis}
+\label{sec:initialExperiments}
+
+In this section we consider the question
+	\begin{quote}
+	Under what conditions is it better to perform linear search rather than binary search?
+	\end{quote}
+
+\subsection{Hypothesis}
+
+Firstly I am going to discuss the theoretical concepts displayed for linear and binary search, in an effort to decipher a prediction as to what I think the conditions may be.\par
+
+Linear search is a search algorithm that sequentially checks each element of a list until the desired element is found. Once it reaches the end of the list, it terminates unsuccessfully. The basic algorithm performs 2 comparisons per iteration; 1 to check if the incrementing integer has hit the end of the list, and 1 to compare the value at each position in the list with the desired value. Worst case complexity would occur if the value is not in the list at all, hence 2n steps must be undergone, giving a complexity of O(n) according to rule 1 of the big Oh rules.\par
+
+IF d(n) is Of(n) then a * d(n) is Of(n) for a greater than 0\newline
+
+
+Best case scenario would be where the desired element is first in the list, hence only 2 * 1 steps are taken, giving a complexity of O(1).\newline
+
+
+Binary search is again a search algorithm that is applied only to sorted arrays. It always compares the target element to the middle the array and chops the array above or below this point according the outcome of the comparison. This search mechanism is more complicated yet more sophisticated. Thinking about the worst case scenario would be when until the array is chopped up to a size of 1.\par
+
+Example: array A of 8 elements.\newline
+
+
+MIDDLE = A[3] ... CHOP LOWER  * * * X * * * *\newline
+
+MIDDLE = A[1] ... CHOP LOWER  * X *\newline
+
+MIDDLE = A[0] ... CANT CHOP   X\newline
+
+
+Therefore, worst case steps would be (a * log(n)) and hence complexity = O(log(n))\newline
+
+
+Best case again would be the same as linear search; O(1), for when the target element is the initial middle element of the array.\newline
+
+
+\subsection{Experimental Design}
+
+In my experimental design, I want to apply the theoretical concepts I know about the algorithms to produce a range of results for both algorithms. The things I have decided to vary are as follows.\par
+
+\begin{itemize}
+    \item The size of the dictionary
+    \item The structure of dictionary e.g sorted or random for linear search
+    \item Approach used for binary search. ie different sorting algorithms
+    \item The position of the target word in the dictionary
+\end{itemize}{}
+
+SIZE\newline
+
+
+I am going to vary the dictionary size logarithmically between 10 and 10,000 to see how the time relatively changes for each search algorithm. I am predicting that the time gap between the 2 searches will increase as the size increases. This is due to the relationship between complexity n and complexity log(n). However I do have to take into account the fact that binary requires a sorted array and will additionally add this time on as well to get both results.\par
+.\newline
+STRUCTURE\newline
+
+
+For linear search I am going to input both sorted and random dictionaries. This is see the time differences between them. I don't feel the differences in time will be that different from the sorted and random inputs, however I will add some code into my linear search to define the upper and lower boundaries of the dictionary. This will allow the algorithm to exit initially if the target output is out of bounds hence decreasing the overall average time for sorted arrays.\par
+.\newline
+SORTING\newline
+
+
+For binary search, I will repeat the experiment using both insertion sort and quick sort, to see which algorithm combination gives the best results. In terms of predictions for the sorting algorithms I have written, I believe quick sort will always come out on top. This is partly due to inefficiency of my insertion sort algorithm discussed above, giving a matching best and worst case. However, I feel that even if I had written the insertion sort to be of maximum efficiency, ie a best complexity of O(n), the likelihood of the insertion being closer to the best case is less than the likelihood of quick sort being closer to the best case complexity: O(nlog(n)). I think quick sort will be a lot more reliable as such in keeping a similar time rather than the insertion sort.\par
+.\newline
+POSITION\newline
+
+
+Finally for both algorithms I will vary the position of the target word in the dictionary. Linear search predictions are pretty self explanatory, giving a linear relationship between position and time taken. I am going to have to do some testing to understand how the time changes for binary search however. My prediction hypothesis is as follows:\par
+
+This method does also use the assumption that arrays are evenly spaced in terms of sorting. ie, the range between numbers doesn't differ too much.\par
+
+If dictionary has an even number of entries, as dictionary is reduced the new truncated dictionary will become odd if target is in lower half, or even if target is in upper half. If in even half, process repeats partitioning dictionary into even and odd chunks depending on where target lies. If dictionary becomes odd size, then how the array splits depends on which odd number it is. Every other odd number (5, 9, 13) will split the array into 2 even arrays, (3, 7, 11) creating 2 odd arrays. I have defined this as:\par
+
+If the dictionary size can be defined as 2n + 1, where n is natural number with odd parity, then the resulting arrays will also be odd.\par
+
+In an odd sized array, the division boundary is always taken as the centre element. (the size / 2 - rounded) In just you could argue that if the array is odd, and the target lies on a decision boundary of the array size, then the likelihood of it being found is higher.\par
+
+In an even sized array, the boundary is always taken as half of the size, hence again if it lie on this boundary it will be found quicker.\par
+
+.\newline
+EXAMPLE\newline
+
+
+ARRAY  1 2 3 4 5 6 7 8 9 10 11 12 13 14\newline
+
+FIND   9\newline
+
+MIDDLE 1 2 3 4 5 6   8 9 10 11 12 13 14\newline
+
+HIGHER\newline
+
+MIDDLE               8 9 10    12 13 14\newline
+
+LOWER\newline
+
+MIDDLE               8   10\newline
+
+FOUND\newline
+
+
+So I could predict that, I know the upper and lower bounds of the array and the array size is 14 - EVEN so the decision boundary will be at element 7, which will using my assumption be around the integer 7.
+I know I will most likely have to go higher and hence the array now will become size 7 - ODD so the decision boundary will be the centre element, the 11th element. I am assuming the integer will be around the value 11 and hence I will most likely have to go lower. The integer 7 adheres to the property I discussed above about every other odd number and so I know the array will split odd. Again, the size is ODD so the decision boundary will be the centre element, the 9th element. I could now predict using my assumption that around 3 iterations of the quick sort algorithm will be required based on my assumptions above. I understand I am not fully there with this concept, but as it is quite complex to get my head around, I have tried my best to understand it.\par
+
+
+\subsection{Experimental Results}
+
+SIZE \& SORTING\newline
+
+
+\begin{center}
+ \begin{tabular}{||c c c c||}
+ \hline
+ Size & Linear & Binary\_Insertion &  Binary\_Quick \\
+ \hline\hline
+ 10 & 0.00 & 0.00 & 0.0 \\
+ \hline
+ 100 & 0.00 & 0.00 & 0.0 \\
+ \hline
+ 1000 & 0.01 & 0.02 & NA \\
+ \hline
+ 10,000 & 0.06 & 0.66 & NA \\
+ \hline
+\end{tabular}
+\end{center}
+
+
+.\newline
+STRUCTURE\newline
+
+
+linear - size 1000\newline
+
+
+\begin{center}
+\begin{tabular}{||c c||}
+\hline
+Structure & Time \\
+\hline\hline
+Sorted & 0.00  \\
+\hline
+Random & 0.01 \\
+\hline
+\end{tabular}
+\end{center}
+.\newline
+POSITION\newline
+
+
+Size 1000\newline
+
+\begin{center}
+ \begin{tabular}{||c c c c||}
+ \hline
+ Position & Linear & Binary\_Insertion &  Binary\_Quick \\ [0.5ex]
+ \hline\hline
+ Front & 0.00 & 0.02 & 0.01 \\
+ \hline
+ Quarter& 0.00 & 0.02 & 0.01 \\
+ \hline
+ Middle & 0.00 & 0.02 & 0.01 \\
+ \hline
+ Back & 0.00 & 0.02 & 0.01 \\
+ \hline
+\end{tabular}
+\end{center}
+
+Binary was given a sorted array here, hence the positions will be relatively the same as Linear Search.\newline
+
+
+
+
+
+% PART 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Extending Experiment to Data Structures}
+\label{sec:part3}
+
+We now extend our previously analysis to consider the question
+\begin{quote}
+Under what conditions are different implementations of the dictionary data structure preferable?
+\end{quote}
+
+For binary tree and hash maps, I will be comparing their finding efficiency's in terms of size of dictionary, giving them a variety of search words, too see which one performs faster. I predict that hash will perform faster as hash key can usually be looked up in 1 iteration. I would except the time of the hash map to barely increase, whereas the binary tree lookup to be increasing. The best case for both structures lookup would be O(1) of course, as the element could be the exactly the key in the hash map, or the top element in the tree. Worst case in terms of the tree would be O(h) where h is the height of the tree. When building my hash map and testing it with the one letter dictionary, my key involved the modulus of the ascii code and position, hence for 1 letter values, they were all coming out with a key of 0, and had to use linear probing. The worst case complexity here would become O(n) as the maximum positions the value could be put away from the key is the number of elements in the dictionary. O(n) will always be greater than O(h) and so although the worst case is very unlikely, the binary tree would here be faster.\par
+
+SIZE\newline
+
+
+\begin{center}
+ \begin{tabular}{||c c c||}
+ \hline
+ Size & Binary\_tree & Hash\_Map  \\ [0.5ex]
+ \hline\hline
+ 10 & 0.00 & 0.00\\
+ \hline
+ 100 & 0.00 & 0.00\\
+ \hline
+ 1000 & 0.00 & 0.00 \\
+ \hline
+ 10,000 & 0.07 & 0.07 \\
+ \hline
+\end{tabular}
+\end{center}
+
+
+% PART 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+\label{sec:conclusions}
+% Give your conclusions from the above experiments
+
+\subsection{Part 2}
+
+
+SIZE and SORTING\newline
+
+
+My result's were not quite as I expected. For the linear search, we can see an increase from 0.0s to 0.06s, showing a relative to the logarithmic scale, a reasonable time scale. For Binary insertion however, we can see the time frame increase from 0.0s to 0.66s - a much larger increase than the linear search; this is due to the fact however of sorting the large array of 10,000 entries and so reflects on the efficiency of the sort rather than the search. The binary quick sort showed some issues however; running seamlessly for the smaller dictionaries, but being unable to finish the sorting process for dictionaries over 1000 entries. I was not expecting this behaviour and went back and rechecked my code for errors. I could not spot a discrepancy and hence am concluding that the algorithm is just to inefficient to complete the sorting process.\par
+.\newline
+STRUCTURE\newline
+
+
+Inputting a random vs sorted dictionary into the linear search, only increases the time frame by 0.01s. This is a much smaller value than I expected, and hence would conclude that sorting the algorithm is not an efficient use of time, if the values position you are searching for is not roughly known.\par
+.\newline
+POSITION\newline
+
+
+I ran this experiment for linear search multiple times, always seeming to get the value 0.0s regardless of the position. This is again not what I was expecting, but could have more to do with my perhaps poor choice of keeping the size constant at 1000 rather than 10,000 - where bigger changes in values can be observed.\par
+
+Binary insertion and quick sort, I used a sorted array to keep the target positions constant. Again here, I was expecting the binary search to perform better, this could be due to again the sorting of the sorted arrays adding a fraction of time. For the middle value, linear was still faster than binary - which I know in theoretical concepts is incorrect.\par
+
+
+\subsection{Part 3}
+
+Again, my experiment churned out some unexpected results. I was predicting that hash map would perform quicker due to the sheer efficiency of the data structure, however they seem to have identical results for each dictionary size. Again this could be due to the data chosen; being closer to binary searches best case scenario.\par
+
+I think overall my experiment was relatively successful, however I have gained a lot of knowledge on experimental design and feel I would approach the problem differently if asked to repeat this coursework.\par
+
+\end{document}
